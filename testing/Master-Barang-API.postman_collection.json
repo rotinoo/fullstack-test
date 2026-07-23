@@ -1,0 +1,366 @@
+{
+  "info": {
+    "name": "Master Barang API",
+    "_postman_id": "b1a7c0de-1234-4a5b-9c8d-master-barang-01",
+    "description": "Postman collection for the Master Barang backend API (Express + TypeScript).\n\nCovers:\n- Health check\n- Kategori list\n- Barang CRUD (list, detail, create, update, soft delete)\n- Validation & not-found negative cases\n\nUsage:\n1. Start the backend: `cd backend && npm run dev` (defaults to http://localhost:4000).\n2. Select the `Master Barang API - Local` environment (or rely on the collection `baseUrl` variable).\n3. Run the whole collection with the Collection Runner. Requests are ordered so that `Create Barang` stores its new id in the `barangId` variable, which the update/detail/delete requests reuse.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "barangId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Kategori",
+      "item": [
+        {
+          "name": "GET /api/kategori",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/kategori",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "kategori"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('data is a non-empty array', () => {",
+                  "  pm.expect(body.data).to.be.an('array');",
+                  "  pm.expect(body.data.length).to.be.above(0);",
+                  "});",
+                  "pm.test('kategori has id and nama_kategori', () => {",
+                  "  pm.expect(body.data[0]).to.have.property('id');",
+                  "  pm.expect(body.data[0]).to.have.property('nama_kategori');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Barang",
+      "item": [
+        {
+          "name": "GET /api/barang (list)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/barang?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "is_aktif", "value": "true", "disabled": true },
+                { "key": "id_kategori", "value": "1", "disabled": true }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('data is an array', () => pm.expect(body.data).to.be.an('array'));",
+                  "pm.test('pagination meta present', () => {",
+                  "  pm.expect(body.pagination).to.have.property('page');",
+                  "  pm.expect(body.pagination).to.have.property('limit');",
+                  "  pm.expect(body.pagination).to.have.property('total');",
+                  "  pm.expect(body.pagination).to.have.property('totalPages');",
+                  "});",
+                  "pm.test('barang items are enriched with kategori', () => {",
+                  "  if (body.data.length > 0) pm.expect(body.data[0]).to.have.property('kategori');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/barang/:id (detail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/barang/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang", "1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('returns the requested id', () => pm.expect(body.data.id).to.eql(1));",
+                  "pm.test('has core barang fields', () => {",
+                  "  ['kode_barang','nama_barang','id_kategori','satuan','harga_beli','harga_jual','is_aktif'].forEach(f => pm.expect(body.data).to.have.property(f));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /api/barang (create)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_barang\": \"BRG-PM-{{$timestamp}}\",\n  \"nama_barang\": \"Barang Uji Postman\",\n  \"id_kategori\": 1,\n  \"satuan\": \"pcs\",\n  \"harga_beli\": 10000,\n  \"harga_jual\": 15000,\n  \"is_aktif\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/barang",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 201', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('created record has an id', () => pm.expect(body.data.id).to.be.a('number'));",
+                  "pm.test('harga_jual >= harga_beli', () => pm.expect(body.data.harga_jual).to.be.at.least(body.data.harga_beli));",
+                  "pm.collectionVariables.set('barangId', body.data.id);",
+                  "console.log('Stored barangId =', body.data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /api/barang/:id (update)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_barang\": \"BRG-PM-UPD-{{$timestamp}}\",\n  \"nama_barang\": \"Barang Uji Postman (Updated)\",\n  \"id_kategori\": 2,\n  \"satuan\": \"box\",\n  \"harga_beli\": 12000,\n  \"harga_jual\": 20000,\n  \"is_aktif\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/barang/{{barangId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang", "{{barangId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('nama_barang was updated', () => pm.expect(body.data.nama_barang).to.include('Updated'));",
+                  "pm.test('id_kategori was updated to 2', () => pm.expect(body.data.id_kategori).to.eql(2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /api/barang/:id (soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/barang/{{barangId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang", "{{barangId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(body.success).to.eql(true));",
+                  "pm.test('is_aktif is now false (soft delete)', () => pm.expect(body.data.is_aktif).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Negative cases",
+      "item": [
+        {
+          "name": "GET /api/barang/:id - not found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/barang/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang", "999999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404', () => pm.response.to.have.status(404));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(body.success).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /api/barang - validation error (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_barang\": \"\",\n  \"nama_barang\": \"\",\n  \"id_kategori\": 999,\n  \"satuan\": \"\",\n  \"harga_beli\": -5,\n  \"harga_jual\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/barang",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 400', () => pm.response.to.have.status(400));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(body.success).to.eql(false));",
+                  "pm.test('errors array is returned', () => {",
+                  "  pm.expect(body.errors).to.be.an('array');",
+                  "  pm.expect(body.errors.length).to.be.above(0);",
+                  "});",
+                  "pm.test('each error has field and message', () => {",
+                  "  body.errors.forEach(e => {",
+                  "    pm.expect(e).to.have.property('field');",
+                  "    pm.expect(e).to.have.property('message');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /api/barang - duplicate kode_barang (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_barang\": \"BRG-001\",\n  \"nama_barang\": \"Duplikat Kode\",\n  \"id_kategori\": 1,\n  \"satuan\": \"pcs\",\n  \"harga_beli\": 1000,\n  \"harga_jual\": 2000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/barang",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "barang"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 400', () => pm.response.to.have.status(400));",
+                  "const body = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(body.success).to.eql(false));",
+                  "pm.test('duplicate kode_barang reported', () => {",
+                  "  const kodeError = (body.errors || []).find(e => e.field === 'kode_barang');",
+                  "  pm.expect(kodeError, 'expected a kode_barang error').to.not.be.undefined;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
