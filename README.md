@@ -3,53 +3,196 @@
   <img src="./logo_mitraplus_typography.png" alt="Mitraplus" width="200" />
 </p>
 
-<h1 align="center">Fullstack Test - Mitraplus</h1>
+<h1 align="center">Master Barang - Fullstack Test</h1>
 
-Repositori ini merupakan tes teknis untuk kandidat posisi Fullstack Developer di Mitraplus. Mohon baca dokumen ini secara menyeluruh sebelum memulai pengerjaan.
+Implementasi modul **Master Barang** secara utuh: REST API dengan **Node.js + Express (TypeScript)** yang menyimpan data sebagai array in-memory (di-load dari file JSON, tanpa database engine), dan frontend **React + Vite (TypeScript)** dengan **Tailwind CSS** + **TanStack Query** yang memanggil API sungguhan.
 
-## Ruang Lingkup Tes
+Spesifikasi tugas lengkap ada di [TASK.md](./TASK.md).
 
-Kandidat diminta membangun satu modul Master Barang secara utuh, mulai dari API (Express), hingga halaman React yang terhubung langsung ke API tersebut secara nyata, bukan frontend yang mock data sendiri. Tes ini tidak memerlukan database engine, data disimpan sebagai mock/in-memory di sisi backend (lihat file **[data/barang.json](./data/barang.json)** dan **[data/kategori.json](./data/kategori.json)**). Tujuan tes ini adalah untuk menilai kemampuan kandidat dalam mengerjakan alur kerja fullstack secara menyeluruh, khususnya kualitas API dan integrasi dengan frontend.
+## Daftar Isi
 
-Spesifikasi lengkap, meliputi skema tabel, kontrak response API, aturan validasi, hingga halaman yang harus dibuat di frontend, tersedia di **[TASK.md](./TASK.md)**. Dokumen README ini hanya berfungsi sebagai ringkasan awal. Acuan resmi tetap mengikuti TASK.md.
+- [Teknologi](#teknologi)
+- [Struktur Proyek](#struktur-proyek)
+- [Prasyarat](#prasyarat)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Environment Variables](#environment-variables)
+- [Dokumentasi API](#dokumentasi-api)
+- [Fitur Frontend](#fitur-frontend)
+- [Screenshot](#screenshot)
+- [Catatan](#catatan)
 
-## Gambaran Umum
+## Teknologi
 
-- **Backend:** Node.js dengan Express, data disimpan sebagai array in-memory yang di-load dari file JSON (tidak perlu database engine atau ORM).
-- **Frontend:** React, menggunakan MUI atau Tailwind (pilih salah satu), dengan routing bebas menggunakan React Router atau TanStack Router.
-- **Modul:** Master Barang, mencakup fitur daftar, tambah, ubah, dan nonaktifkan/hapus. Terdapat relasi ke Master Kategori.
-- Detail endpoint, format response, dan aturan validasi dijelaskan pada bagian 3 TASK.md.
-- Detail halaman dan alur frontend dijelaskan pada bagian 4 TASK.md.
+| Layer | Teknologi |
+|-------|-----------|
+| Backend | Node.js, Express 4, TypeScript, tsx |
+| Data | Array in-memory di-seed dari `data/*.json` (tanpa DB/ORM) |
+| Frontend | React 18, Vite 5, TypeScript |
+| UI | Tailwind CSS v3 |
+| Data fetching | TanStack Query v5 + Axios |
+| Routing | React Router v6 |
+| Notifikasi | react-hot-toast |
 
-## Prosedur Pengerjaan
+## Struktur Proyek
 
-1. Fork repositori ini ke akun GitHub masing-masing.
-2. Clone hasil fork tersebut, kemudian buat branch baru dengan nama yang jelas, misalnya `feature/master-barang`.
-3. Kerjakan sesuai spesifikasi pada TASK.md. Gunakan pesan commit yang deskriptif dan menjelaskan perubahan yang dilakukan, hindari pesan generik seperti `fix` atau `update` yang berulang.
-4. Setelah selesai, buka Pull Request dari repositori fork ke repositori ini (`mitraplus/fullstack-test`, branch `main`). Sertakan pada deskripsi PR: ringkasan pekerjaan, cara menjalankan aplikasi, serta kebutuhan environment yang perlu disiapkan reviewer.
-5. Kirimkan tautan PR beserta tautan repositori fork. Pengumpulan dalam bentuk arsip ZIP tidak diterima.
+```
+fullstack-test/
+├── data/                     # Data contoh asli (referensi)
+├── backend/                  # API Express + TypeScript
+│   ├── src/
+│   │   ├── data/             # barang.json & kategori.json (di-load in-memory)
+│   │   ├── store/            # State in-memory + auto-increment id
+│   │   ├── types/            # Tipe bersama
+│   │   ├── utils/            # Helper response envelope
+│   │   ├── validators/       # Aturan validasi barang
+│   │   ├── services/         # Logika bisnis (barang, kategori)
+│   │   ├── controllers/      # Handler request/response
+│   │   ├── routes/           # Definisi rute /api
+│   │   ├── middleware/       # Error handler & 404
+│   │   └── index.ts          # Bootstrap server (CORS, JSON, routes)
+│   ├── .env.example
+│   ├── package.json
+│   └── tsconfig.json
+└── frontend/                 # React + Vite + Tailwind
+    ├── src/
+    │   ├── api/              # Axios client + fungsi endpoint
+    │   ├── hooks/            # TanStack Query hooks + useDebounce
+    │   ├── components/       # Komponen reusable (tabel, dialog, dll)
+    │   ├── pages/            # Halaman daftar & form
+    │   ├── types/           # Tipe bersama
+    │   └── utils/           # Format Rupiah
+    ├── .env.example
+    ├── package.json
+    └── vite.config.ts
+```
 
-Batas waktu pengerjaan adalah 2 minggu sejak tes ini diberikan.
+## Prasyarat
 
-## Kriteria Penilaian
+- **Node.js ≥ 18** (dikembangkan & diuji dengan Node 22)
+- npm
 
-Penilaian tidak hanya didasarkan pada apakah aplikasi berjalan, tetapi juga mencakup:
+## Menjalankan Aplikasi
 
-- Riwayat commit dan isi Pull Request, apakah alur pengerjaan tergambar jelas atau hanya terdiri dari satu commit besar.
-- Backend: fungsi CRUD berjalan, struktur data dan relasi ke kategori benar, input tervalidasi, dan response error tersusun rapi (bukan stack trace mentah).
-- Frontend: tabel dan form benar-benar terhubung ke API, disertai loading state dan penanganan error yang memadai.
-- README pada proyek hasil pengerjaan kandidat. Reviewer harus dapat menjalankan proyek tersebut hanya dengan mengikuti README yang disediakan.
+Jalankan backend dan frontend di dua terminal terpisah.
 
-Rincian bobot penilaian per area tersedia pada bagian 6 TASK.md.
+### 1. Backend (port 4000)
 
-## Pertanyaan Umum
+```bash
+cd backend
+npm install
+cp .env.example .env      # Windows PowerShell: copy .env.example .env
+npm run dev
+```
 
-**Apakah boleh menggunakan stack di luar yang disebutkan?**
-Stack inti (Node.js/Express, React) bersifat wajib. Untuk pilihan UI library, silakan memilih salah satu opsi yang tersedia, tidak diperkenankan mencampur keduanya. Database engine dan ORM tidak digunakan pada tes ini.
+API berjalan di `http://localhost:4000`. Cek kesehatan: `http://localhost:4000/health`.
 
-**Apakah tampilan antarmuka harus sempurna secara desain?**
-Tidak. Tampilan kustom yang kompleks bukan merupakan kriteria penilaian utama. Hal yang lebih diutamakan adalah fitur berjalan dengan baik, struktur kode rapi, dan API konsisten. Komponen bawaan MUI atau utility class Tailwind standar sudah mencukupi.
+### 2. Frontend (port 5173)
 
----
+```bash
+cd frontend
+npm install
+cp .env.example .env      # Windows PowerShell: copy .env.example .env
+npm run dev
+```
 
-Selamat mengerjakan.
+Buka `http://localhost:5173` — otomatis diarahkan ke `/master/barang`.
+
+### Build produksi (opsional)
+
+```bash
+cd backend && npm run build && npm start
+cd frontend && npm run build && npm run preview
+```
+
+## Environment Variables
+
+**Backend** (`backend/.env`):
+
+| Variabel | Default | Keterangan |
+|----------|---------|------------|
+| `PORT` | `4000` | Port server API |
+| `CORS_ORIGIN` | `http://localhost:5173` | Origin frontend yang diizinkan (pisahkan dengan koma untuk banyak origin) |
+
+**Frontend** (`frontend/.env`):
+
+| Variabel | Default | Keterangan |
+|----------|---------|------------|
+| `VITE_API_URL` | `http://localhost:4000/api` | Base URL API (termasuk prefix `/api`) |
+
+## Dokumentasi API
+
+Semua rute berprefiks `/api` dan memakai envelope response yang konsisten.
+
+| Method | Endpoint | Deskripsi | Sukses |
+|--------|----------|-----------|--------|
+| GET | `/api/barang` | Daftar barang (+ filter & paginasi) | 200 |
+| GET | `/api/barang/:id` | Detail satu barang | 200 |
+| POST | `/api/barang` | Tambah barang | 201 |
+| PUT | `/api/barang/:id` | Ubah barang | 200 |
+| DELETE | `/api/barang/:id` | Nonaktifkan barang (soft delete) | 200 |
+| GET | `/api/kategori` | Daftar kategori untuk dropdown | 200 |
+
+**Query parameter `GET /api/barang`:** `page` (default 1), `limit` (default 10, max 100), `search` (cari di `kode_barang`/`nama_barang`), `is_aktif` (`true`/`false`), `id_kategori`.
+
+**Contoh response list:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "kode_barang": "BRG-001",
+      "nama_barang": "Kertas A4 80gsm",
+      "id_kategori": 2,
+      "satuan": "rim",
+      "harga_beli": 45000,
+      "harga_jual": 55000,
+      "is_aktif": true,
+      "created_at": "2026-01-10T08:00:00.000Z",
+      "updated_at": "2026-01-10T08:00:00.000Z",
+      "kategori": { "id": 2, "nama_kategori": "Alat Tulis" }
+    }
+  ],
+  "pagination": { "page": 1, "limit": 10, "total": 5, "totalPages": 1 }
+}
+```
+
+**Contoh error validasi (400):**
+
+```json
+{
+  "success": false,
+  "message": "Validasi gagal.",
+  "errors": [
+    { "field": "kode_barang", "message": "Kode barang sudah digunakan." }
+  ]
+}
+```
+
+Aturan validasi (backend & frontend disinkronkan): `kode_barang` wajib/unik/max 50/alfanumerik+tanda hubung, `nama_barang` wajib/max 200, `id_kategori` wajib & harus ada, `satuan` wajib/max 30, `harga_beli` ≥ 0, `harga_jual` ≥ `harga_beli`. Pengecekan unik `kode_barang` pada update mengecualikan record itu sendiri.
+
+## Fitur Frontend
+
+- Tabel daftar barang: No, Kode (monospace), Nama, Kategori, Satuan, Harga Beli/Jual (format Rupiah), Status (chip), Aksi.
+- Pencarian dengan **debounce 300 ms**, filter kategori, dan filter status.
+- Paginasi mengikuti field API (`page`, `totalPages`).
+- Loading state, **empty state**, dan notifikasi error (toast).
+- Form tambah/ubah reusable dengan validasi per-field di sisi client; error server (mis. kode duplikat) dipetakan ke field terkait.
+- Konfirmasi sebelum nonaktifkan (soft delete) dengan toast feedback.
+- Caching & invalidation otomatis via TanStack Query setelah create/update/delete.
+
+## Screenshot
+
+**Halaman daftar barang**
+
+![Daftar Barang](./docs/screenshots/daftar-barang.png)
+
+**Form dengan validasi (kode duplikat dari backend)**
+
+![Form Validasi](./docs/screenshots/form-validasi.png)
+
+## Catatan
+
+- **Data bersifat in-memory.** Setiap kali server backend di-restart, data kembali ke isi awal `backend/src/data/*.json`. Ini perilaku yang diharapkan (bukan bug) sesuai spesifikasi tugas.
+- Tidak ada autentikasi — semua endpoint `/api/*` dapat diakses tanpa token, sesuai lingkup tes.
