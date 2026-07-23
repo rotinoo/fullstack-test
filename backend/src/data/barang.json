@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "kode_barang": "BRG-001",
+    "nama_barang": "Kertas A4 80gsm",
+    "id_kategori": 2,
+    "satuan": "rim",
+    "harga_beli": 45000.0,
+    "harga_jual": 55000.0,
+    "is_aktif": true,
+    "created_at": "2026-01-10T08:00:00.000Z",
+    "updated_at": "2026-01-10T08:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "kode_barang": "BRG-002",
+    "nama_barang": "Mouse Wireless",
+    "id_kategori": 1,
+    "satuan": "pcs",
+    "harga_beli": 60000.0,
+    "harga_jual": 85000.0,
+    "is_aktif": true,
+    "created_at": "2026-01-11T08:00:00.000Z",
+    "updated_at": "2026-01-11T08:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "kode_barang": "BRG-003",
+    "nama_barang": "Minyak Goreng 2L",
+    "id_kategori": 3,
+    "satuan": "botol",
+    "harga_beli": 28000.0,
+    "harga_jual": 34000.0,
+    "is_aktif": true,
+    "created_at": "2026-01-12T08:00:00.000Z",
+    "updated_at": "2026-01-12T08:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "kode_barang": "BRG-004",
+    "nama_barang": "Keyboard Mekanikal",
+    "id_kategori": 1,
+    "satuan": "pcs",
+    "harga_beli": 250000.0,
+    "harga_jual": 320000.0,
+    "is_aktif": false,
+    "created_at": "2026-01-13T08:00:00.000Z",
+    "updated_at": "2026-01-14T09:30:00.000Z"
+  },
+  {
+    "id": 5,
+    "kode_barang": "BRG-005",
+    "nama_barang": "Pulpen Gel Hitam",
+    "id_kategori": 2,
+    "satuan": "pcs",
+    "harga_beli": 3000.0,
+    "harga_jual": 5000.0,
+    "is_aktif": true,
+    "created_at": "2026-01-15T08:00:00.000Z",
+    "updated_at": "2026-01-15T08:00:00.000Z"
+  }
+]
