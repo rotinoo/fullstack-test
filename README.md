@@ -182,16 +182,6 @@ Aturan validasi (backend & frontend disinkronkan): `kode_barang` wajib/unik/max 
 - Konfirmasi sebelum nonaktifkan (soft delete) dengan toast feedback.
 - Caching & invalidation otomatis via TanStack Query setelah create/update/delete.
 
-## Screenshot
-
-**Halaman daftar barang**
-
-![Daftar Barang](./docs/screenshots/daftar-barang.png)
-
-**Form dengan validasi (kode duplikat dari backend)**
-
-![Form Validasi](./docs/screenshots/form-validasi.png)
-
 ## Catatan
 
 - **Data bersifat in-memory.** Setiap kali server backend di-restart, data kembali ke isi awal `backend/src/data/*.json`. Ini perilaku yang diharapkan (bukan bug) sesuai spesifikasi tugas.
